@@ -1,0 +1,239 @@
+
+#include "Poli.hpp"
+#include <cmath>
+
+
+std::ostream& operator<<(std::ostream& os, const Poli& p){
+    "riscrivere modulare tale che non stampi coefficienti 1.0 \
+    quindi anzi che fare output del coefficiente, scrivere una \
+    funzione che fa solo output di supporto e che stampa il coeff \
+    se non e' 1. \
+    poi vedere come gestire esponenti 0";
+    int i;
+    std::cout << "<";
+    for(i = p.dim - 1; i > 1; i--){
+        std::cout << p.pol[i].c << "x^" << p.pol[i].e << " + ";
+    }
+    for(; i >= 0; i--){
+        std::cout << p.pol[i].c;
+        if (p.pol[i].e > 1){
+            std::cout << "x^" << p.pol[i].e;
+        }
+        else if (p.pol[i].e == 1){
+            std::cout << "x";
+        }
+        if (i == 1)
+            std::cout << " + ";
+    }
+    std::cout << ">";
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, Poli& p){
+    char ch;
+    double c;
+    int e;
+    Poli ret;
+    std::string m_str;
+    std::cin >> ch;
+
+    do{
+        std::cin >> ch;
+        if( ch == 'x'){
+            if(m_str.empty())
+                c = 1.0;
+            else
+                c = std::stod(m_str);
+            m_str.clear();
+            std::cin >> ch;
+            if(ch == '^'){
+                std::cin >> e;
+                std::cin >> ch;
+            }
+            else if(ch == '+' || ch == '>'){
+                e = 1;
+            }
+            Poli aux(c, e);
+            std::cout << "hey" << aux << std::endl;
+            ret += aux;
+            std::cout << ret << std::endl;
+
+        }
+        if(ch != '>' && ch != '+'){
+            m_str += ch;
+            std::cout << "debug: " << m_str << std::endl;
+        }
+    } while(ch != '>');
+    if( !m_str.empty() ){
+        c = std::stod(m_str);
+        ret += Poli(c);
+    }
+    p = ret;
+    return is;
+}
+
+
+Poli::Poli(double c, int e){
+    dim = 1;
+    deg = e;
+    pol = new monomial[dim];
+    pol[0].c = c;
+    pol[0].e = deg;
+}
+
+Poli::Poli(const Poli& p){
+    dim = p.dim;
+    deg = p.deg;
+    pol = new monomial[dim];
+    for(int i = 0; i < dim; i++) pol[i] = p.pol[i];
+}
+
+Poli::~Poli(){
+    delete[] pol;
+}
+
+Poli& Poli::operator=(const Poli& p){
+    deg = p.deg;
+    dim = p.dim;
+    pol = new monomial[dim];
+    for(int i = 0; i < dim; i++) pol[i] = p.pol[i];
+
+    return *this;
+}
+
+// eval
+double Poli::operator()(double x){
+    double ret = 0;
+    int i;
+    for(i = 0; i < 2 && i < dim; i++){
+        if (pol[i].e == 0) ret += pol[i].c;
+        else if (pol[i].e == 1) ret += pol[i].c * x;
+    }
+    for(; i < dim; i++){
+        ret += pol[i].c + pow(x, pol[i].e);
+    }
+    return ret;
+}
+
+double Poli::operator[](int e){
+    int ind = find(e);
+    double c;
+    if (ind != -1)
+        c = pol[find(e)].c;
+    else
+        c = 0.0;
+    return c;
+}
+
+Poli operator+(const Poli& p1, const Poli& p2){
+
+
+
+
+
+
+    return p1;
+}
+
+Poli operator-(const Poli& p1, const Poli& p2){
+    return p1 + p2.inverse();
+}
+
+Poli& Poli::operator+=(const Poli& p){
+    *this = somma_polinomi(p);
+    return *this;
+}
+
+
+
+
+
+
+// funzioni di supporto
+Poli& Poli::trim(int new_dim){
+    monomial* aux_pol = new monomial[new_dim];
+    for(int i = 0; i < new_dim; i++) aux_pol[i] = pol[i];
+    delete[] pol;
+    pol = aux_pol;
+    return *this;
+}
+
+Poli Poli::inverse() const{
+    Poli q = *this;
+    for(int i = 0; i < dim; i++)
+        q.pol[i].c = -pol[i].c;
+    return q;
+}
+
+int Poli::find(int e) const {
+    for(int i = 0; i < dim; i++){
+        if (pol[i].e == e) return i;
+    }
+    return -1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// "UNUSED"
+// l'oggetto chiamante e' quello con grado maggiore
+Poli Poli::somma_polinomi(const Poli& p) const{
+    // BUG WHERE IT KEEPS 0.0 COEFFICIENT TERMS IN THE RESULT,
+    // this happens when adding the 0.0 polynomial
+    // or when subtracting non zero polinomials which share a monomial
+    Poli w;
+    w.dim = dim + p.dim;
+    w.deg = deg;
+    monomial* aux_pol = new monomial[w.dim];
+    delete[] w.pol;
+    w.pol = aux_pol;
+
+    int i = 0, j = 0, k = 0;
+    int a, b;
+    while (i < dim && j < p.dim){
+        a = pol[i].e;
+        b = p.pol[j].e;
+        if (a < b){
+            w.pol[k].e = a;
+            w.pol[k].c = pol[i].c;
+            i++;
+        }
+        else if (a == b){
+            w.pol[k].e = a;
+            w.pol[k].c = a + b;
+            i++;
+            j++;
+        }
+        else if (a > b){
+            w.pol[k].e = b;
+            w.pol[k].c = p.pol[j].c;
+            j++;
+        }
+        k++;
+    }
+    // essendo deg >= p.deg, allora j finisce prima e faccio il dump dell'i rimanente
+    while ( i < dim){
+        w.pol[k].e = pol[i].e;
+        w.pol[k].c = pol[i].c;
+        i++;
+        k++;
+    }
+    while ( j < p.dim){
+        w.pol[k].e = pol[j].e;
+        w.pol[k].c = pol[j].c;
+        j++;
+        k++;
+    }
+    w.trim(k);
+    return w;
+}
