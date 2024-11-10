@@ -38,7 +38,6 @@ std::ostream& operator<<(std::ostream& os, const Mono& m){
 }
 
 
-
 // <7.1109x^5 + 4x + 2.3> e <29x^9 + -4.3x^2 + 3x^1 + x^0> e <x^5 + 234.0>
 std::istream& operator>>(std::istream& is, Poli& p){
     // legge il coefficiente sia col + e poi -
@@ -172,7 +171,6 @@ double Poli::operator[](int e){
     return 0.0;
 }
 
-
 Poli operator+(const Poli& p1, const Poli& p2){
     // sommare con un merge
     // non dimenticare di eliminare coefficienti nulli con esponente > 0
@@ -206,6 +204,20 @@ Poli& Poli::operator+=(const Mono m){
     trim();
 
     return *this;
+}
+
+Poli operator*(const Poli& p1, const Poli& p2){
+    Poli r;
+    for(int i = 0; i < p1.dim; i++){
+        for(int j = 0; j < p2.dim; j++){
+            r += p1.pol[i] * p2.pol[j];
+        }
+    }
+    return r;
+}
+
+Mono operator*(const Mono& m1, const Mono& m2){
+    return Mono(m1.c * m2.c, m1.e + m2.e);
 }
 
 Poli Poli::inverse() const{
@@ -263,12 +275,13 @@ Poli& Poli::remove(const int ind){
     return *this;
 }
 
-
 Poli& Poli::append(const Mono m){
-    //im just gonna recycle insert lmao
-    //in realta' dovrei mettere append dentro insert e scrivere append a parte
-    //non OGGI
-    return insert(m);
+    if(dim == 1 && pol[0] == 0){
+        pol[0] = m;
+        return *this;
+    }
+    else
+        return insert(m);
 }
 
 Poli& Poli::trim(){
@@ -313,3 +326,14 @@ Poli& Poli::_trim(){
     }
     return *this;
 }
+
+
+
+
+
+
+
+
+
+
+

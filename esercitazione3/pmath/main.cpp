@@ -24,6 +24,9 @@ int main(){
     std::cout << a(23) << std::endl;
     std::cout << a(-0.0823) << std::endl;
 
+    std::cout << l * c << " " << k * j << std::endl;
+
+    
     std::cout << "dammi un polinomio" << std::endl;
     std::cin >> k;
 

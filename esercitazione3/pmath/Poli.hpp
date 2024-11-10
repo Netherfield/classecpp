@@ -11,6 +11,8 @@ class Mono{
         // friend bool operator>=(const Mono&, const Mono&);
         // friend bool operator==(const Mono&, const Mono&);
 
+        friend Mono operator*(const Mono&, const Mono&);
+
         Mono(double a = 0.0, int b = 0){ c = a; e = b;}
         Mono(std::string);
 
@@ -35,6 +37,8 @@ class Poli{
     // OVERLOADS
     friend Poli operator+(const Poli&, const Poli&);
     friend Poli operator-(const Poli&, const Poli&);
+
+    friend Poli operator*(const Poli&, const Poli&);
 
     public:
     // costruttori
