@@ -38,6 +38,7 @@ std::ostream& operator<<(std::ostream& os, const Mono& m){
 }
 
 
+
 // <7.1109x^5 + 4x + 2.3> e <29x^9 + -4.3x^2 + 3x^1 + x^0> e <x^5 + 234.0>
 std::istream& operator>>(std::istream& is, Poli& p){
     // legge il coefficiente sia col + e poi -
@@ -171,6 +172,7 @@ double Poli::operator[](int e){
     return 0.0;
 }
 
+
 Poli operator+(const Poli& p1, const Poli& p2){
     // sommare con un merge
     // non dimenticare di eliminare coefficienti nulli con esponente > 0
@@ -295,35 +297,6 @@ Poli& Poli::trim(){
             r.append(pol[i]);
     }
     *this = r;
-    return *this;
-}
-
-
-
-
-
-
-// versione non ricorsiva
-Poli& Poli::_trim(){
-    Poli r;
-    int nz, i;
-
-    if( !(deg == 0 && pol[0] == 0) ){
-        for(i = 0, nz = 0; i < dim; i++){
-            if(pol[i] != 0) nz++;
-        }
-        Mono* aux = new Mono[nz];
-        for(i = 0, nz = 0; i < dim; i++){
-            if(pol[i] != 0){
-                aux[nz] = pol[i];
-                nz++;
-            }
-        }
-        delete[] pol;
-        pol = aux;
-        dim = nz;
-        deg = pol[dim - 1];
-    }
     return *this;
 }
 
