@@ -64,7 +64,7 @@ class Poli{
     int find(int) const;
     Poli& insert(const Mono);
     Poli& remove(const int);
-    Poli& _trim(); //restituisce il polinomio ridimensionato
+    // Poli& _trim(); //restituisce il polinomio ridimensionato
     Poli& trim();
     Poli& append(const Mono);
 

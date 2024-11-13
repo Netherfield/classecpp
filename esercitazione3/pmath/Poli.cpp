@@ -77,7 +77,7 @@ std::istream& operator>>(std::istream& is, Poli& p){
     if (!mon.empty()){
         std::cout << p;
         p += Mono(mon);
-        std::cout << "forgot this case" << mon << std::endl;
+        // std::cout << "forgot this case" << mon << std::endl;
         mon.clear();
     }
     std::cout << p;
