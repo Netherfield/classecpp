@@ -71,13 +71,24 @@ class A{
     B b;
 };
 
-A::A(const A& a) : b(a.C2()) {
+// A::A(const A& a) : b(a.C2()) {
+//     val = a.val;
+//     pb = new B(a.C3());
+// }
+
+A::A(const A& a) : b(a.b) {
     val = a.val;
-    pb = new B(a.C3());
+    if (a.pb == &a.b){ // se pb punta a b in a, allora fai puntare a b
+        pb = &b;
+    }
+    else{
+        pb = new B(*(a.pb)); //altrimenti nuovo costruttore di copia sulla B puntata da a.pb
+    }
 }
 
 A::~A(){
-    delete pb;
+    if(pb != &b) // altrimenti cerca di liberare due volte b
+        delete pb;
 }
 
 

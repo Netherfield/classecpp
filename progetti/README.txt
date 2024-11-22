@@ -1,0 +1,1 @@
+Cartella per progetti non parte di esami/compitini/esercitazioni del corso
